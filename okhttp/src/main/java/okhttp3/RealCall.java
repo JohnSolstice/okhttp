@@ -140,12 +140,13 @@ final class RealCall implements Call {
           signalledCallback = true;
           responseCallback.onResponse(RealCall.this, response);
         }
-      } catch (IOException e) {
+      } catch (Exception e) {
         if (signalledCallback) {
           // Do not signal the callback twice!
           Platform.get().log(INFO, "Callback failure for " + toLoggableString(), e);
         } else {
-          responseCallback.onFailure(RealCall.this, e);
+          IOException error = new IOException(e.getMessage());
+          responseCallback.onFailure(RealCall.this, error);
         }
       } finally {
         client.dispatcher().finished(this);
